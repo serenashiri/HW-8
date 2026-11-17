@@ -1,0 +1,79 @@
+---
+title: "HW 8"
+author: "Serena Shiri"
+format: typst
+editor: visual
+---
+
+## Use of AI tools
+
+I did not use any AI tools in the completion of this assignment.
+
+## Example 1
+
+```{r}
+library(tidyverse)
+
+prs_main <- -0.03  # PRS main effect (reference pack-years group)
+
+table2 <- tibble(
+  pack_years = c("Reference", "11-20", "21-30", "31-40", "41-50", ">50"),
+  interaction = c(0, -0.0038, -0.0068, -0.013, -0.015, -0.017)
+) |>
+  mutate(prs_slope = prs_main + interaction)
+
+table2
+```
+
+## Exercise 1
+
+Because the model includes PRS x pack-years interactions, the relationship between PRS and FEV1/FVC ratio isn't a single number. It depends on pack-years of smoking. For the reference pack-years group, a one-unit increase in PRS is associated with a 0.03 decrease in FEV1/FVC ratio, holding the covariates constant. For each other category, the PRS slope is -0.03 plus that category's interaction term, so it gets more negative as pack-years increase (from -0.0338 for 11-20 to -0.047 for \>50).
+
+## Exercise 2
+
+Yes. Every PRS x pack-years interaction term has p\<0.001, and none of the 95% CIs contain 0. So there is statistically significant evidence that the relationship between PRS and FEV1/FVC ratio depends on pack-years of smoking.
+
+## Exercise 3
+
+-0.04 is the main effect of the "\>50" pack-years category, not an interaction term. Compared to the reference pack-years group, people with more than 50 pack-years are estimated to have an FEV1/FVC ratio 0.04 lower when PRS=0, holding the other variables constant. Because of the interaction, this difference isn't constant. It becomes 0.017 larger for each one-unit increase in PRS.
+
+## Example 2
+
+```{r}
+fruit_main <- -0.028  # availability of fruit
+frug_main <- -0.041  # frugivory
+interaction <- -0.130  # frugivory and availability of fruit
+
+# slope of fruit availability at different frugivory values
+tibble(frugivory = c(0, 1, 2)) |>
+  mutate(fruit_slope = fruit_main + interaction * frugivory)
+```
+
+## Exercise 4
+
+The model includes an interaction between fruit availability and frugivory, so the relationship between fruit availability and daily travel distance depends on frugivory. The slope for fruit availability is -0.028 + (-0.130 x frugivory). When frugivory = 0, a one-unit increase in fruit availability is associates with a 0.028 decrease in daily travel distance. For each one-unit increase in frugivory, that slope becomes 0.130 more negative. The interaction term is statistically significant (p\<0.001), so the relationship depends on frugivory.
+
+## Exercise 5
+
+-0.041 is the main effect of frugivory. When availability of fruit=0, a one-unit increase in frugivory is associated with a 0.041 decrease in daily travel distance, holding the other predictors constant. It is not the interaction term, so it is only the frugivory effect at fruit availability=0. The interaction (-0.130) changes this effect as fruit availability changes.
+
+## Example 3
+
+## Exercise 6
+
+```{r}
+prop56 <- tibble(
+  income = rep(c("Low", "High"), each = 2),
+  period = rep(c("Pre", "Post"), 2),
+  est = c(14.0, 6.8, 4.5, 4.2),
+  lower = c(12.8, 5.3, 3.8, 2.9),
+  upper = c(15.1, 8.3, 5.2, 5.5)
+)
+
+prop56 |>
+  select(income, period, est) |>
+  pivot_wider(names_from = period, values_from = est) |>
+  mutate(change = Post - Pre)
+```
+
+Yes, I think there is evidence that the effect of Prop 56 depends on income status. Among low-income adults, predicted smoking prevalence dropped from 14.0% (95% CI 12.8-15.1) to 6.8% (5.3-8.3), a decrease of 7.2 percentage points, and the pre and post intervals don't overlap. Among high-income adults, it went from 4.5% (3.8-5.2) to 4.2% (2.9-5.5), a decrease of only 0.3 points, and the intervals overlap almost completely. Since the pre-to-post change is much larger for low-income adults, the effect of Prop 56 differs by income, which is an interaction between Prop 56 timing and income. Comparing intervals is informal, and the slide doesn't show a formal test of the interaction term. But a 7.2-point drop versus a 0.3-point drop is a large difference.
